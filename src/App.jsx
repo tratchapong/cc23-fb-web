@@ -3,6 +3,7 @@ function App() {
   return (
     <>
       <h1 className="text-4xl text-red-300">CC23 Fakebook</h1>
+      <input type="checkbox" value="dark" className="checkbox theme-controller" />
       <div>
         <button className="btn btn-neutral">Neutral</button>
         <button className="btn btn-primary">Primary</button>
