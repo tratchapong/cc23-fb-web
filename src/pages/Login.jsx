@@ -1,3 +1,4 @@
+import RegisterForm from '@/components/RegisterForm'
 import React from 'react'
 
 function Login() {
@@ -44,7 +45,7 @@ function Login() {
           <form method="dialog">
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
           </form>
-          <div className="text-5xl">Register Form</div>
+          <RegisterForm />
         </div>
       </dialog>
 
