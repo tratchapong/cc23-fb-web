@@ -1,8 +1,8 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { registerSchema } from '@/validations/schema'
-import axios from 'axios'
 import { Flip, toast } from 'react-toastify'
+import { mainApi } from '@/api/mainApi'
 
 function RegisterForm() {
 	const { formState, register, handleSubmit, reset } = useForm({
@@ -17,7 +17,7 @@ function RegisterForm() {
 
 	const onSubmit = async (data) => {
 		try {
-			const resp = await axios.post('http://localhost:8899/api/auth/register', data)
+			const resp = await mainApi.post('/auth/register', data)
 			toast(resp.data.message, { type : 'success'})
 		}catch(err){
 			console.error(err.response?.data?.error )

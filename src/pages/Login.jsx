@@ -1,6 +1,20 @@
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { loginSchema } from "@/validations/schema"
 import RegisterForm from "@/components/RegisterForm"
+import { toast } from "react-toastify"
 
 function Login() {
+	const { formState, register, handleSubmit, reset } = useForm({
+		resolver: zodResolver(loginSchema),
+		mode: 'onSubmit',
+		defaultValues: { identity: "", password: "" }
+	})
+	const { errors } = formState
+
+	const onSubmit = async (data) => {
+		toast.success(JSON.stringify(data, null, 2))
+	}
 	return (
 		<>
 			<div className="h-175 pt-20 pb-28 bg-base-200 max-md:pt-2">
@@ -14,14 +28,22 @@ function Login() {
 					</div>
 					<div className="flex flex-1 ">
 						<div className="card bg-base-100 w-full h-[350px] shadow-xl mt-8">
-							<form>
+							<form onSubmit={handleSubmit(onSubmit)}>
 								<div className="card-body gap-3 p-4">
-									<input type="text"
-										className='input input-bordered w-full'
-										placeholder='E-mail or Phone number' />
-									<input type="password"
-										className='input input-bordered w-full'
-										placeholder='password' />
+									<div className="w-full">
+										<input type="text"
+											{...register('identity')}
+											className='input input-bordered w-full'
+											placeholder='E-mail or Phone number' />
+										<p className="text-sm text-error">{errors.identity?.message}</p>	
+									</div>
+									<div className="w-full">
+										<input type="password"
+											{...register('password')}
+											className='input input-bordered w-full'
+											placeholder='password' />
+										<p className="text-sm text-error">{errors.password?.message}</p>
+									</div>
 									<button className='btn btn-primary text-xl'>Login</button>
 									<p className="text-center cursor-pointer opacity-70">
 										Forgotten password?
@@ -29,7 +51,7 @@ function Login() {
 									<div className="divider my-0"></div>
 									<button className='btn btn-secondary text-lg text-white mx-auto'
 										type='button'
-										onClick={()=>document.querySelector('#register-form').showModal()}
+										onClick={() => document.querySelector('#register-form').showModal()}
 									>Create new account</button>
 								</div>
 							</form>
