@@ -3,8 +3,10 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { loginSchema } from "@/validations/schema"
 import RegisterForm from "@/components/RegisterForm"
 import { toast } from "react-toastify"
+import useUserStore from "@/stores/userStore"
 
 function Login() {
+	const login  = useUserStore( state=>state.login )
 	const { formState, register, handleSubmit, reset } = useForm({
 		resolver: zodResolver(loginSchema),
 		mode: 'onSubmit',
@@ -13,8 +15,14 @@ function Login() {
 	const { errors } = formState
 
 	const onSubmit = async (data) => {
-		toast.success(JSON.stringify(data, null, 2))
+		try {
+			const resp = await login(data)
+			// toast.success(resp.data.message)
+		}catch(err) {
+			toast.error(err.response?.data.error || err.message)
+		}
 	}
+
 	return (
 		<>
 			<div className="h-175 pt-20 pb-28 bg-base-200 max-md:pt-2">

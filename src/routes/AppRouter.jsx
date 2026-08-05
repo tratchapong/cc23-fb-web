@@ -2,6 +2,7 @@ import Friends from "@/pages/Friends";
 import Home from "@/pages/Home";
 import Login from "@/pages/Login";
 import Profile from "@/pages/Profile";
+import useUserStore from "@/stores/userStore";
 import { createBrowserRouter, Navigate, Outlet, RouterProvider } from "react-router";
 
 const commonPath = [
@@ -31,11 +32,10 @@ const userRouter = createBrowserRouter([
 ])
 
 function AppRouter() {
-	// const user = 'andy@ggg.mail'
-	const user = null
+	const user = useUserStore(state => state.user)
 	const finalRouter = user ? userRouter : guestRouter
 	return (
-		<RouterProvider router={finalRouter} />
+		<RouterProvider key={user?.id} router={finalRouter} />
 	)
 }
 
