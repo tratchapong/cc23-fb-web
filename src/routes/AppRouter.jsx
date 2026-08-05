@@ -1,3 +1,4 @@
+import UserLayout from "@/layouts/UserLayout";
 import Friends from "@/pages/Friends";
 import Home from "@/pages/Home";
 import Login from "@/pages/Login";
@@ -17,10 +18,7 @@ const guestRouter = createBrowserRouter([
 
 const userRouter = createBrowserRouter([
 	{
-		path: '/', element: <>
-			<div className="py-4 border">Header</div>
-			<Outlet />
-		</>,
+		path: '/', Component: UserLayout,
 		children: [
 			{ path: '', Component : Home},
 			{ path: 'friends', Component: Friends },
