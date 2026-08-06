@@ -4,26 +4,39 @@ import useUserStore from '@/stores/userStore'
 import { PhotoIcon2 } from '@/icons'
 import AddPicture from './AddPicture'
 import axios from 'axios'
+import usePostStore from '@/stores/postStore'
+import { toast } from 'react-toastify'
+import uploadCloud from '@/utils/uploadCloud'
 
 function PostForm() {
   const user = useUserStore(state => state.user)
+  const createPost = usePostStore(state => state.createPost)
   const [addPic, setAddPic] = useState(false)
   const [file, setFile] = useState(null)
- const hdlCreatePost = async () => {
-   let imageUrl = ''
-   try {
-     if(file) {
-       const formData = new FormData()
-       formData.append('file', file)
-       formData.append('upload_preset', 'cc23-fb-upload')
-       const resp = await axios.post('https://api.cloudinary.com/v1_1/tratchapong/image/upload', formData)
-       imageUrl = resp.data.secure_url
-       console.log(imageUrl)
-     }
-   }catch(err){
-     console.log(err)
-   }
- }
+  const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const hdlCreatePost = async () => {
+    let imageUrl = ''
+    setLoading(true)
+    try {
+      // upload file ไปที่ cloudinary => ได้ secure_url
+      if (file) {
+        imageUrl = await uploadCloud(file)
+      }
+      // เอา secure_url ที่ได้รวมเป็น body ส่งให้ backend /api/post {message, image}
+      const body = { message: message, image: imageUrl }
+      const resp = await createPost(body)
+      setLoading(false)
+      document.getElementById('postform-modal').close()
+    } catch (err) {
+      console.log(err)
+      const errMsg = err.response?.data.message || err.message
+      toast.error(errMsg)
+      setLoading(false)
+    }
+  }
+
 
 
   return (
@@ -45,6 +58,9 @@ function PostForm() {
       </div>
       <textarea className='textarea textarea-ghost w-full'
         placeholder={`what do you think? ${user.firstName}`}
+        onChange={e => setMessage(e.target.value)}
+        value={message}
+        rows={message.split('\n').length}
       ></textarea>
       {addPic && <AddPicture file={file} setFile={setFile} />}
       <div className="flex border rounded-lg p-2 justify-between items-center">
@@ -56,8 +72,11 @@ function PostForm() {
           <PhotoIcon2 className='w-7' />
         </div>
       </div>
-      <button className='btn btn-sm btn-primary' onClick={hdlCreatePost}>
-        Create Post</button>
+      <button className="btn btn-sm btn-primary" onClick={hdlCreatePost} disabled={loading || (!message.trim() && !file)}>
+        Create Post
+        {loading && <span className="loading loading-dots loading-sm"></span>}
+      </button>
+
     </div>
   )
 }
