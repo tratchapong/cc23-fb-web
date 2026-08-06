@@ -7,6 +7,8 @@ import useUserStore from "@/stores/userStore"
 
 function PostItem(props) {
 	const deletePost = usePostStore(state => state.deletePost)
+	const createLike = usePostStore(state=> state.createLike)
+	const unLike = usePostStore(state=> state.unLike)
 	const user = useUserStore(state => state.user)
 	const {post} = props
 	const { id, message, image, createdAt, user : userInPost, comments, likes } = props.post
@@ -19,14 +21,12 @@ function PostItem(props) {
 			await createLike(id)
 		}
 	}
-
 	const hdlDelete = async () => {
 		try {
 			const resp = await deletePost(id)
 		} catch (err) {
 			toast.error(err.response?.data.error || err.message)
 		}
-
 	}
 	return (
 		<div className="card bg-base-100 shadow-xl">
@@ -83,9 +83,12 @@ function PostItem(props) {
 				</div>
 				<div className="divider h-0 my-0"></div>
 				<div className="flex gap-3 justify-between">
-					<div className={`flex gap-3 justify-center items-center cursor-pointer hover:bg-gray-300 rounded-lg py-2 flex-1
-           ${Math.random() > 0.5 ? 'bg-blue-300 text-white' : ''} `} >
-						<LikeIcon className='w-6' /> Like
+					<div className="flex gap-3 justify-center items-center cursor-pointer hover:bg-gray-300 rounded-lg py-2 flex-1"
+						onClick={hdlLikeClick}
+					>
+						{haveLike && <LikeIcon className='w-10 outline-primary outline-1 rounded outline-offset-2' />}
+						{!haveLike && <LikeIcon className='w-6' />}
+						Like
 					</div>
 					<div className="flex gap-3 justify-center items-center cursor-pointer hover:bg-gray-300 rounded-lg py-2 flex-1">
 						<CommentIcon className='w-8' /> Comment
