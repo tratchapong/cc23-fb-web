@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import useUserStore from '../stores/userStore'
 import Avatar from './Avatar'
 import { ActivityIcon, PhotoIcon, VideoIcon } from '../icons'
@@ -9,6 +9,14 @@ function CreatePost() {
   const user = useUserStore(state => state.user)
   const [isOpen, setIsOpen] = useState(false)
 
+  useEffect( ()=>{
+    if(isOpen) {
+      document.querySelector('#postform-modal').showModal()
+    }else {
+      document.querySelector('#postform-modal').close()
+    }
+  }, [isOpen] )
+
   return (
     <>
       <div className='card bg-base-100 shadow-xl'>
@@ -18,7 +26,7 @@ function CreatePost() {
               imgSrc={user.profileImage}
             />
             <button className='btn flex-1 rounded-full justify-start'
-              onClick={()=>document.querySelector('#postform-modal').showModal()}
+              onClick={()=>setIsOpen(prv=>!prv)}
             >
               What do you think?
             </button>
@@ -42,7 +50,7 @@ function CreatePost() {
       </div>
       <dialog id="postform-modal" className="modal" onClose={() => setIsOpen(false)}>
         <div className="modal-box">
-          {true && <PostForm />}
+          {isOpen && <PostForm />}
           <form method="dialog">
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
           </form>
